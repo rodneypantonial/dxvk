@@ -133,7 +133,7 @@ namespace dxvk {
 
   private:
 
-    small_vector<DxvkShaderIoVar, 32> m_vars;
+    small_vector<DxvkShaderIoVar, 16> m_vars;
 
     static bool isBuiltInInputGenerated(
             VkShaderStageFlagBits stage,
