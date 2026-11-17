@@ -1859,7 +1859,7 @@ namespace dxvk {
     constexpr static uint32_t MaxSets = DxvkPipelineLayoutKey::MaxSets;
     constexpr static uint32_t MaxStages = 6u;
 
-    using BindingList = small_vector<DxvkShaderDescriptor, 32>;
+    using BindingList = small_vector<DxvkShaderDescriptor, 4>;
   public:
 
     DxvkPipelineBindings(
