@@ -5119,6 +5119,9 @@ namespace dxvk {
       // Wait until the buffer is idle which may include the copy (and resolve) we just issued.
       if (!WaitForResource(*pResource->GetBuffer(), pResource->GetMappingBufferSequenceNumber(Subresource), Flags))
         return D3DERR_WASSTILLDRAWING;
+
+      if (m_dxvkDevice->getDeviceStatus() == VK_ERROR_DEVICE_LOST)
+        return D3DERR_DEVICELOST;
     }
 
     const bool atiHack = desc.Format == D3D9Format::ATI1 || desc.Format == D3D9Format::ATI2;
@@ -5559,6 +5562,9 @@ namespace dxvk {
         const Rc<DxvkBuffer> mappingBuffer = pResource->GetBuffer<D3D9_COMMON_BUFFER_TYPE_MAPPING>();
         if (!WaitForResource(*mappingBuffer, pResource->GetMappingBufferSequenceNumber(), Flags))
           return D3DERR_WASSTILLDRAWING;
+
+        if (m_dxvkDevice->getDeviceStatus() == VK_ERROR_DEVICE_LOST)
+          return D3DERR_DEVICELOST;
 
         pResource->SetNeedsReadback(false);
       }

@@ -185,6 +185,9 @@ namespace dxvk {
 
           if (status != VK_ERROR_DEVICE_LOST)
             m_device->waitForIdle();
+
+          // Wake up threads waiting for resources so they can see the error
+          m_finishCond.notify_all();
         }
 
         m_submitQueue.pop();

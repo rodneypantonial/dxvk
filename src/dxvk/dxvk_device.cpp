@@ -650,8 +650,11 @@ namespace dxvk {
     if (resource.isInUse(access)) {
       auto t0 = dxvk::high_resolution_clock::now();
 
-      m_submissionQueue.synchronizeUntil([&resource, access] {
-        return !resource.isInUse(access);
+      // After device loss the submissions holding the resource never
+      // complete, so stop waiting instead of hanging the caller forever
+      m_submissionQueue.synchronizeUntil([this, &resource, access] {
+        return !resource.isInUse(access)
+          || m_submissionQueue.getLastError() == VK_ERROR_DEVICE_LOST;
       });
 
       auto t1 = dxvk::high_resolution_clock::now();
