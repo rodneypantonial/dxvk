@@ -636,7 +636,11 @@ namespace dxvk {
 
     auto t0 = dxvk::high_resolution_clock::now();
 
-    fence.wait(value);
+    // A lost device never signals the fence again
+    while (!fence.wait(value, std::chrono::milliseconds(100))) {
+      if (m_submissionQueue.getLastError() == VK_ERROR_DEVICE_LOST)
+        break;
+    }
 
     auto t1 = dxvk::high_resolution_clock::now();
     auto us = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0);

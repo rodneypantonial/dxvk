@@ -116,6 +116,18 @@ namespace dxvk::sync {
       });
     }
 
+    // Returns false when the timeout passes before the fence reaches the value
+    template<typename Rep, typename Period>
+    bool wait(uint64_t value, const std::chrono::duration<Rep, Period>& timeout) {
+      if (value <= m_value.load(std::memory_order_acquire))
+        return true;
+
+      std::unique_lock<dxvk::mutex> lock(m_mutex);
+      return m_cond.wait_for(lock, timeout, [this, value] {
+        return value <= m_value.load(std::memory_order_acquire);
+      });
+    }
+
   private:
 
     std::atomic<uint64_t>    m_value;

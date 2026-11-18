@@ -4876,7 +4876,8 @@ namespace dxvk {
     }
 
     // Wait for staging memory to get recycled.
-    if (stagingBufferAllocated > MaxMemoryInFlight)
+    if (stagingBufferAllocated > MaxMemoryInFlight
+     && m_dxvkDevice->getDeviceStatus() != VK_ERROR_DEVICE_LOST)
       m_dxvkDevice->waitForFence(*m_stagingBufferFence, stagingBufferAllocated - MaxMemoryInFlight);
   }
 
